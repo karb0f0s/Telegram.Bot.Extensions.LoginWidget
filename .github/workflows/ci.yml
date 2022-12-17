@@ -25,21 +25,19 @@ jobs:
 
     steps:
     - name: Set env
-      # echo "ciVersionSuffix='ci.$GITHUB_RUN_ID+git.commit.$GITHUB_SHA'" >> $GITHUB_ENV
       run: |
         echo "isPreRelease=${{ env.versionSuffix != '' }}" >> $GITHUB_ENV
-        if [ isPreRelease ]
-        then
+        if [ isPreRelease ]; then
           echo "releaseVersion='${{ env.versionPrefix }}-${{ env.versionSuffix }}'" >> $GITHUB_ENV
         else
           echo "releaseVersion='${{ env.versionPrefix }}'" >> $GITHUB_ENV
         fi
-        if [ isPreRelease ]
-        then
+        if [ isPreRelease ]; then
           echo "ciVersion='${{ env.versionPrefix }}-${{ env.versionSuffix }}.${{ env.ciVersionSuffix }}'" >> $GITHUB_ENV
         else
           echo "ciVersion='${{ env.versionPrefix }}-${{ env.ciVersionSuffix }}'" >> $GITHUB_ENV
         fi
+
     - name: Test env
       run: |
         echo "versionPrefix:      ${{ env.versionPrefix }}"
@@ -53,10 +51,12 @@ jobs:
         echo "testsProject:       ${{ env.testsProject }}"
 
     - uses: actions/checkout@v3
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: ${{ env.netSdkVersion }}
+
     - uses: actions/cache@v3
       with:
         path: ~/.nuget/packages
@@ -64,8 +64,10 @@ jobs:
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
         restore-keys: |
           ${{ runner.os }}-nuget
+
     - name: Restore dependencies
       run: dotnet restore
+
     - name: Build
       run: |
         dotnet build
@@ -74,6 +76,7 @@ jobs:
         -p:Version=${{ env.ciVersion }}
         -p:CI_EMBED_SYMBOLS=true
         ${{ env.projectPath }}
+
     - name: Test
       run: |
         dotnet test
@@ -82,3 +85,32 @@ jobs:
         --configuration ${{ env.buildConfiguration }}
         --logger "trx;LogFileName=testresults.trx"
         ${{ env.testsProject }}
+
+    - name: Add GitHub Repo
+      run: |
+        dotnet nuget add source
+        --username USERNAME
+        --password ${{ secrets.GITHUB_TOKEN }}
+        --store-password-in-clear-text
+        --name github "https://nuget.pkg.github.com/karb0f0s/index.json"
+
+    - name: Pack nuget
+      run: |
+        dotnet pack
+        --no-build
+        --output "packages"
+        --configuration $(buildConfiguration)
+        -p:Version=${{ env.ciVersion }}
+        -p:CI_EMBED_SYMBOLS=true
+        ${{ env.projectPath }}
+
+    - name: View output
+      run: |
+        ls bin/${{ env.buildConfiguration }}/*
+
+    - name: Pack nuget
+      run: |
+        dotnet nuget push
+        "bin/${{ env.buildConfiguration }}/*.nupkg"
+        --api-key ${{ secrets.PUBLISH_TOKEN }}
+        --source "github"
