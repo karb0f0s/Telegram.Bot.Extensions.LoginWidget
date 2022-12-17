@@ -23,6 +23,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Sent env
+      run: |
+        echo "ciVersionSuffix='ci.${{ env.GITHUB_RUN_ID }}+git.commit.${{ env.GITHUB_SHA }}'" >> $GITHUB_ENV
+        echo "isPreRelease=${{ env.versionSuffix != '' }}" >> $GITHUB_ENV
+        echo "releaseVersion=''" >> $GITHUB_ENV
+        echo "ciVersion=''" >> $GITHUB_ENV
     - name: Test env
       run: |
         echo "versionPrefix:      ${{ env.versionPrefix }}"
@@ -34,11 +40,6 @@ jobs:
         echo "buildConfiguration: ${{ env.buildConfiguration }}"
         echo "projectPath:        ${{ env.projectPath }}"
         echo "testsProject:       ${{ env.testsProject }}"
-      env:
-        ciVersionSuffix: ${{ format('ci.{0}+git.commit.{1}', '${{ env.GITHUB_RUN_ID }}', '${{ env.GITHUB_SHA }}') }}
-        isPreRelease: ${{ env.versionSuffix != '' }}
-        releaseVersion: ''
-        ciVersion: ''
 
     - uses: actions/checkout@v3
     - name: Setup .NET
