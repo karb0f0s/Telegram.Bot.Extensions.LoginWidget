@@ -35,7 +35,7 @@ jobs:
         echo "projectPath:        ${{ env.projectPath }}"
         echo "testsProject:       ${{ env.testsProject }}"
       env:
-        ciVersionSuffix: ${{ format('ci.{0}+git.commit.{1}', ${{ env.GITHUB_RUN_ID }}, ${{ env.GITHUB_SHA }}) }}
+        ciVersionSuffix: ${{ format('ci.{0}+git.commit.{1}', '${{ env.GITHUB_RUN_ID }}', '${{ env.GITHUB_SHA }}') }}
         isPreRelease: ${{ env.versionSuffix != '' }}
         releaseVersion: ''
         ciVersion: ''
