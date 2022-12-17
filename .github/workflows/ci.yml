@@ -104,13 +104,9 @@ jobs:
           -p:CI_EMBED_SYMBOLS=true \
           ${{ env.projectPath }}
 
-    - name: View output
-      run: |
-        ls "packages/*""
-
     - name: Pack nuget
       run: |
         dotnet nuget push \
-          "packages/*.nupkg" \
+          packages/*.nupkg \
           --api-key ${{ secrets.PUBLISH_TOKEN }} \
           --source "github"
