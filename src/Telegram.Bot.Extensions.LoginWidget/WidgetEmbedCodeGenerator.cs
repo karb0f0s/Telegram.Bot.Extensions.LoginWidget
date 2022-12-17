@@ -1,5 +1,5 @@
-namespace Telegram.Bot.Extensions.LoginWidget
-{
+namespace Telegram.Bot.Extensions.TelegramLogin;
+
     /// <summary>
     /// Generates JavaScript embed code matching the one found on https://core.telegram.org/widgets/login
     /// </summary>

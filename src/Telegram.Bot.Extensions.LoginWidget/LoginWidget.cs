@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Linq;
 
-namespace Telegram.Bot.Extensions.LoginWidget
-{
+namespace Telegram.Bot.Extensions.TelegramLogin;
+
     /// <summary>
     /// A helper class used to verify authorization data
     /// </summary>
