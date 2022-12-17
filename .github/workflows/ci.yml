@@ -15,6 +15,7 @@ env:
   buildConfiguration: Release
   netSdkVersion: 7.0.x
   ciVersionSuffix: ci.$GITHUB_RUN_ID+git.commit.$GITHUB_SHA
+  isPreRelease: ${{ env.versionSuffix != '' }}
   projectPath: src/Telegram.Bot.Extensions.LoginWidget/Telegram.Bot.Extensions.LoginWidget.csproj
   testsProject: test/Telegram.Bot.Extensions.LoginWidget.Tests.Unit/Telegram.Bot.Extensions.LoginWidget.Tests.Unit.csproj
 
@@ -27,7 +28,7 @@ jobs:
     - name: Sent env
       run: |
         # echo "ciVersionSuffix='ci.$GITHUB_RUN_ID+git.commit.$GITHUB_SHA'" >> $GITHUB_ENV
-        echo "isPreRelease=${{ env.versionSuffix != '' }}" >> $GITHUB_ENV
+        # echo "isPreRelease=${{ env.versionSuffix != '' }}" >> $GITHUB_ENV
         echo "releaseVersion=''" >> $GITHUB_ENV
         echo "ciVersion=''" >> $GITHUB_ENV
     - name: Test env
