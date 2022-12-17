@@ -29,11 +29,13 @@ jobs:
       run: |
         echo "isPreRelease=${{ env.versionSuffix != '' }}" >> $GITHUB_ENV
         if [ isPreRelease ]
+        then
           echo "releaseVersion='$(versionPrefix)-$(versionSuffix)'" >> $GITHUB_ENV
         else
           echo "releaseVersion='$(versionPrefix)'" >> $GITHUB_ENV
         fi
         if [ isPreRelease ]
+        then
           echo "ciVersion='$(versionPrefix)-$(versionSuffix).$(ciVersionSuffix)'" >> $GITHUB_ENV
         else
           echo "ciVersion='$(versionPrefix)-$(ciVersionSuffix)'" >> $GITHUB_ENV
